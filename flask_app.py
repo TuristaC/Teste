@@ -108,17 +108,17 @@ def home():
 
             result1 += "calcular"
 
-    return render_template("cativo.html", errors=errors, result=result)
+    return render_template('cativo.html', errors=errors, result=result)
 
 
 @app.route('/metodologia')
 def metodologia_route():
-    return render_template("metodologia.html")
+    return render_template('metodologia.html')
 
 
 @app.route('/contato')
 def contato_route():
-    return render_template("contato.html")
+    return render_template('contato.html')
 
 
 # @app.route('/cativo')
@@ -127,18 +127,18 @@ def contato_route():
 
 @app.route('/livre')
 def livre_route():
-    return render_template("livre.html")
+    return render_template('livre.html')
 
 
 @app.route('/desconto')
 def desconto_route():
-    return render_template("desconto.html")
+    return render_template('desconto.html')
 
 
 @app.route('/preco')
 def preco_route():
-    return render_template("preco.html")
+    return render_template('preco.html')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)
