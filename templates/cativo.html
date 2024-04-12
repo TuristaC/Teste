@@ -6,6 +6,18 @@
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
         <title>Calculadora de Desconto no Mercado Livre de Energia</title>
+    <style>
+            .btn-calcular {
+                background-color: #556B2F;
+                color: white;
+            }
+            .metodologia-link {
+                color: #556B2F;
+                margin-top: 20px;
+                display: block;
+            }
+        </style>
+
     </head>
 
     <body>
@@ -17,7 +29,7 @@
             <ul class="nav navbar-nav">
               <li class="active"><a href="#">Home</a></li>
               <li><a href="https://energialivre.cemig.com.br/duvidas-frequentes/">Dúvidas?</a></li>
-              <li><a href="http://carolineruella.pythonanywhere.com/contato">Contato</a></li>
+              <li><a href="http://calculadoramercadolivre.com.br/contato">Contato</a></li>
             </ul>
           </div>
         </nav>
@@ -26,7 +38,7 @@
                 <div class="container">
                    {{errors}}
                    {{result}}
-                    <label>Entre com os dados</label>
+                    <label>Descubra Seu Desconto ao Entrar no Mercado Livre de Energia: Preencha os Campos e Calcule Agora!</label>
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
@@ -298,8 +310,9 @@
                     <small id="emailHelp" class="form-text text-muted"></small>
                 </div>
 -->
-                <button type="submit" class="btn btn-primary">Calcular</button>
-                <a href="http://carolineruella.pythonanywhere.com/metodologia">Deseja entender a Metodologia?</a>
+                <button type="submit" class="btn btn-primary btn-calcular">Calcular</button>
+                <a href="http://calculadoramercadolivre.com.br/metodologia" class="metodologia-link">Deseja entender a Metodologia?</a>
+
 
             </form>
         </div>

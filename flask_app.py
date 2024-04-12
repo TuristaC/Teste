@@ -17,7 +17,7 @@ def teste():
     return render_template('teste.html')
 
 
-@app.route('/95', methods=["GET", "POST"])
+@app.route('/simulacao-preco', methods=["GET", "POST"])
 def home():
     # print('log funcionando')
     # errors = ""
