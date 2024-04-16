@@ -23,8 +23,8 @@ TUSDe_FP = 0.09001
 t_atual = [TE_FP, TUSDe_FP, TE_P, TUSDe_P, TUSDd_P, TUSDd_FP,0]
 energia = 'i5'
 
-#t_atual = tarifa_atual(distribuidora,subgrupo,modalidade)
-#energia = cal_VDB(distribuidora,subgrupo,modalidade,InputDemandaHP,InputDemandaHFP,InputConsumoHP,InputConsumoHFP)[1]
+t_atual = tarifa_atual(distribuidora,subgrupo,modalidade)
+energia = cal_VDB(distribuidora,subgrupo,modalidade,InputDemandaHP,InputDemandaHFP,InputConsumoHP,InputConsumoHFP)[1]
 
 def do_calculation(t_atual,energia,InputDemandaHP,InputDemandaHFP,InputConsumoHP,InputConsumoHFP,imposto):
     try:

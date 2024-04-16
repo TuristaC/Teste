@@ -3,34 +3,51 @@
 import pandas as pd
 from datetime import datetime
 
-url = 'https://dadosabertos.aneel.gov.br/dataset/5a583f3e-1646-4f67-bf0f-69db4203e89e/resource/fcf2906c-7c32-4b9b-a637-054e7a5234f4/download/tarifas-homologadas-distribuidoras-energia-eletrica.csv'
-tarifas = pd.read_csv(url, low_memory=False,encoding='latin-1',sep=';')
-#tarifas = pd.read_csv(r'C:\Users\guisa\Downloads\mysite\tarifas.csv', low_memory=False,encoding='latin-1',sep=';')
 
-distribuidoras =tarifas['SigAgente'].dropna().unique().tolist()
+# Carregar os arquivos CSV
+parte1 = pd.read_csv('parte1.csv', sep=';', encoding='ISO-8859-1')
+parte2 = pd.read_csv('parte2.csv', sep=';', encoding='ISO-8859-1')
+parte3 = pd.read_csv('parte3.csv', sep=';', encoding='ISO-8859-1')
 
-tarifas = tarifas[(tarifas['DscBaseTarifaria'] == "Tarifa de Aplicação")]
-tarifas = tarifas[(tarifas['SigAgenteAcessante'] == "Não se aplica")]
-tarifas = tarifas[(tarifas['DscDetalhe'] == "Não se aplica")]
-tarifas = tarifas[(tarifas['DscModalidadeTarifaria'] == "Azul")|(tarifas['DscModalidadeTarifaria'] == "Verde")]
-tarifas = tarifas[(tarifas['DscSubGrupo'] == "A2")|(tarifas['DscSubGrupo'] == "A3")|(tarifas['DscSubGrupo'] == "A3a")|(tarifas['DscSubGrupo'] == "A4")|(tarifas['DscSubGrupo'] == "AS")]
-tarifas = tarifas.reset_index(drop=True)
+# Concatenar os DataFrames
+tarifa = pd.concat([parte1, parte2, parte3])
 
-tarifas['VlrTUSD']=tarifas['VlrTUSD'].str.replace(',','.')
-tarifas['VlrTE']=tarifas['VlrTE'].str.replace(',','.')
+# Salvar o DataFrame resultante em um único arquivo CSV
+#df.to_csv('tarifa.csv', sep=';', index=False, encoding='ISO-8859-1')
 
-for a in range(0,len(tarifas)):
-    tarifas.loc[a,'DatFimVigencia']=datetime.strptime(tarifas.loc[a,'DatFimVigencia'], '%Y-%M-%d')
+
+
+
+#arquivo = 'tarifa.csv'
+
+# url = 'https://dadosabertos.aneel.gov.br/dataset/5a583f3e-1646-4f67-bf0f-69db4203e89e/resource/fcf2906c-7c32-4b9b-a637-054e7a5234f4/download/tarifas-homologadas-distribuidoras-energia-eletrica.csv'
+#tarifas = pd.read_csv(url, low_memory=False,encoding='latin-1',sep=';')
+#tarifa = pd.read_csv(arquivo, low_memory=False, encoding='ISO-8859-1', sep=';')
+
+distribuidoras =tarifa['SigAgente'].dropna().unique().tolist()
+
+tarifa = tarifa[(tarifa['DscBaseTarifaria'] == "Tarifa de Aplicação")]
+tarifa = tarifa[(tarifa['SigAgenteAcessante'] == "Não se aplica")]
+tarifa = tarifa[(tarifa['DscDetalhe'] == "Não se aplica")]
+tarifa = tarifa[(tarifa['DscModalidadeTarifaria'] == "Azul") | (tarifa['DscModalidadeTarifaria'] == "Verde")]
+tarifa = tarifa[(tarifa['DscSubGrupo'] == "A2") | (tarifa['DscSubGrupo'] == "A3") | (tarifa['DscSubGrupo'] == "A3a") | (tarifa['DscSubGrupo'] == "A4") | (tarifa['DscSubGrupo'] == "AS")]
+tarifa = tarifa.reset_index(drop=True)
+
+tarifa['VlrTUSD']=tarifa['VlrTUSD'].str.replace(',', '.')
+tarifa['VlrTE']=tarifa['VlrTE'].str.replace(',', '.')
+
+for a in range(0, len(tarifa)):
+    tarifa.loc[a, 'DatFimVigencia']=datetime.strptime(tarifa.loc[a, 'DatFimVigencia'], '%Y-%M-%d')
 dict_types = {"DatFimVigencia":"datetime64[ns]"}
-tarifas = tarifas.astype(dict_types)
+tarifa = tarifa.astype(dict_types)
 
-for a in range(0,len(tarifas)):
-    tarifas.loc[a,'AnoVigencia']=tarifas.loc[a,'DatFimVigencia'].year
-tarifas = tarifas[(tarifas['AnoVigencia'] > 2023)]
+for a in range(0, len(tarifa)):
+    tarifa.loc[a, 'AnoVigencia']=tarifa.loc[a, 'DatFimVigencia'].year
+tarifa = tarifa[(tarifa['AnoVigencia'] > 2023)]
 
-tarifas = tarifas.reset_index(drop=True)
-tarifas.set_index(['SigAgente','DscSubGrupo','DscModalidadeTarifaria','NomPostoTarifario','DscUnidadeTerciaria'], inplace=True)
-tarifas.sort_index()
+tarifa = tarifa.reset_index(drop=True)
+tarifa.set_index(['SigAgente', 'DscSubGrupo', 'DscModalidadeTarifaria', 'NomPostoTarifario', 'DscUnidadeTerciaria'], inplace=True)
+tarifa.sort_index()
 
 def tarifa_atual(distribuidora,subgrupo,modalidade):
     """
@@ -45,16 +62,16 @@ def tarifa_atual(distribuidora,subgrupo,modalidade):
     """
     try:
         if (modalidade == 'Verde'):
-            demanda_fp_kw = tarifas.query("SigAgente == @distribuidora and DscSubGrupo == @subgrupo and DscModalidadeTarifaria == @modalidade and NomPostoTarifario =='Não se aplica' and DscUnidadeTerciaria =='kW'")
+            demanda_fp_kw = tarifa.query("SigAgente == @distribuidora and DscSubGrupo == @subgrupo and DscModalidadeTarifaria == @modalidade and NomPostoTarifario =='Não se aplica' and DscUnidadeTerciaria =='kW'")
             demanda_ponta_kw = 0
             TUSDd_P = 0
         elif (modalidade == 'Azul'):
-            demanda_ponta_kw = tarifas.query("SigAgente == @distribuidora and DscSubGrupo == @subgrupo and DscModalidadeTarifaria == @modalidade and NomPostoTarifario =='Ponta' and DscUnidadeTerciaria =='kW'")
-            demanda_fp_kw = tarifas.query("SigAgente == @distribuidora and DscSubGrupo == @subgrupo and DscModalidadeTarifaria == @modalidade and NomPostoTarifario =='Fora ponta' and DscUnidadeTerciaria =='kW'")
+            demanda_ponta_kw = tarifa.query("SigAgente == @distribuidora and DscSubGrupo == @subgrupo and DscModalidadeTarifaria == @modalidade and NomPostoTarifario =='Ponta' and DscUnidadeTerciaria =='kW'")
+            demanda_fp_kw = tarifa.query("SigAgente == @distribuidora and DscSubGrupo == @subgrupo and DscModalidadeTarifaria == @modalidade and NomPostoTarifario =='Fora ponta' and DscUnidadeTerciaria =='kW'")
             TUSDd_P = float(demanda_ponta_kw.iloc[0,10])
 
-        fora_ponta_mwh =  tarifas.query("SigAgente == @distribuidora and DscSubGrupo == @subgrupo and DscModalidadeTarifaria == @modalidade and NomPostoTarifario =='Fora ponta' and DscUnidadeTerciaria =='MWh'")
-        ponta_mwh =  tarifas.query("SigAgente == @distribuidora and DscSubGrupo == @subgrupo and DscModalidadeTarifaria == @modalidade and NomPostoTarifario =='Ponta' and DscUnidadeTerciaria =='MWh'")
+        fora_ponta_mwh =  tarifa.query("SigAgente == @distribuidora and DscSubGrupo == @subgrupo and DscModalidadeTarifaria == @modalidade and NomPostoTarifario =='Fora ponta' and DscUnidadeTerciaria =='MWh'")
+        ponta_mwh =  tarifa.query("SigAgente == @distribuidora and DscSubGrupo == @subgrupo and DscModalidadeTarifaria == @modalidade and NomPostoTarifario =='Ponta' and DscUnidadeTerciaria =='MWh'")
         TE_FP = float(fora_ponta_mwh.iloc[0,11])/1000
         TUSDe_FP = float(fora_ponta_mwh.iloc[0,10])/1000
         TE_P = float(ponta_mwh.iloc[0,11])/1000
@@ -78,3 +95,4 @@ subgrupo = 'A4'
 modalidade = 'Azul'
 print(tarifa_atual(distribuidora,subgrupo,modalidade)[6])
 
+#print(tarifa)

@@ -47,5 +47,32 @@
   </div>
 </div>
 
+<!-- Script JavaScript para fazer a solicitação POST -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    function calcular_resultado() {
+        // Obtenha os dados do formulário
+        var formData = new FormData();
+        formData.append('dist', document.getElementById('dist').value);
+        formData.append('subgrupo', document.getElementById('subgrupo').value);
+        formData.append('modalidade', document.getElementById('modalidade').value);
+        formData.append('InputDemandaHP', document.getElementById('InputDemandaHP').value);
+        formData.append('InputDemandaHFP', document.getElementById('InputDemandaHFP').value);
+        formData.append('InputConsumoHP', document.getElementById('InputConsumoHP').value);
+        formData.append('InputConsumoHFP', document.getElementById('InputConsumoHFP').value);
+        formData.append('ICMS', document.getElementById('ICMS').value);
+        formData.append('PASEP', document.getElementById('PASEP').value);
+
+        // Faz uma solicitação POST para a rota Flask
+        axios.post('/simulacao-preco', formData).then(response => {
+            // Exibe o resultado retornado pelo servidor
+            console.log(response.data.result);
+            // Faça o que quiser com o resultado retornado
+        }).catch(error => {
+            console.error('Erro ao fazer solicitação:', error);
+        });
+    }
+</script>
 </body>
 </html>
+
